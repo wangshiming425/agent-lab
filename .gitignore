@@ -7,3 +7,4 @@
 
 #项目依赖
 pyproject.toml
+uv.lock
