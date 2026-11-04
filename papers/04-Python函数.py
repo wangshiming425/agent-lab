@@ -9,6 +9,7 @@ def two_sum(num_1: float, num_2: float) -> float:
     return num_1 + num_2
 
 #这里有类型注解的使用,可以标注参数类型和返回值类型,但起不到限制作用
+#也有说明文档的使用
 
 
 
