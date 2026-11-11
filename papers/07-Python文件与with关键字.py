@@ -25,3 +25,14 @@ class Timer:
 with Timer() as t:
     # 执行一些耗时操作
     sum(range(1000000))
+
+def read_file_by_line(file_path: str):
+    with open(file_path, "r", encoding="utf-8") as file:
+        for line in file:
+            yield line
+
+
+# 使用方式：迭代生成器
+for line in read_file_by_line("test.txt"):
+    print(line, end="")
+
