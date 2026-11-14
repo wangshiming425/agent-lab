@@ -1,6 +1,7 @@
-from fastapi import FastAPI
+from typing import Annotated, List
+from fastapi import FastAPI, Query
 from enum import Enum
-from pydantic import BaseModel
+from pydantic import BaseModel,Field
 
 app = FastAPI()
 
@@ -29,15 +30,31 @@ async def get_item(item: Items):
         return {"item": item}
 
 
-# 查询参数使用
-@app.get("/items/")
-async def get_items(skip: int = 0, limit: int = 10):
-    return {"skip": skip, "limit": limit}
-#请求体参数使用
+# 请求体参数使用
 class User(BaseModel):
     username: str
     email: str | None = None
     password: str
+
+
 @app.get("/users/")
 async def get_users(user: User):
     return user.dict()
+
+
+@app.get("/items/")
+async def get_items(
+    skip: Annotated[int, Query(ge=0, description="跳过记录数")] = 0,
+    limit: Annotated[int, Query(ge=1, le=100, description="每页条数")] = 10,
+    q: Annotated[str, Query(description="查询条件", max_length=50)] = "",
+):
+    return {"skip": skip, "limit": limit, "q": q}
+
+class ItemCreate(BaseModel):
+    username: Annotated[str, Field(min_length=1, max_length=100)]    # 想强制必填就去掉 = ""
+    price: Annotated[float, Field(gt=0)]                                  # 无默认值 → 必填
+    tags: list[str]                                                       # 必填
+
+@app.post("/items/")
+async def create_item(item: ItemCreate):
+    return {"item": item}
